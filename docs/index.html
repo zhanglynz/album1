@@ -42,30 +42,22 @@
 <script>
 let slideIndex = 0;
 let slides = [];
-
-/* 🔹 CHANGE THIS if you rename the folder */
 const photoFolder = "photos";
 
-/* Fetch image list from server */
-fetch(photoFolder + "/")
-  .then(response => response.text())
-  .then(html => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
+fetch("photos.json")
+  .then(response => response.json())
+  .then(files => {
+    const slideshow = document.getElementById("slideshow");
 
-    const links = doc.querySelectorAll("a");
-    links.forEach(link => {
-      const href = link.getAttribute("href");
-      if (href.match(/\.(jpg|jpeg|png|gif)$/i)) {
-        const div = document.createElement("div");
-        div.className = "slide";
+    files.forEach(file => {
+      const div = document.createElement("div");
+      div.className = "slide";
 
-        const img = document.createElement("img");
-        img.src = photoFolder + "/" + href;
+      const img = document.createElement("img");
+      img.src = photoFolder + "/" + file;
 
-        div.appendChild(img);
-        document.getElementById("slideshow").appendChild(div);
-      }
+      div.appendChild(img);
+      slideshow.appendChild(div);
     });
 
     slides = document.getElementsByClassName("slide");
@@ -77,7 +69,7 @@ function showSlides() {
     slides[i].style.display = "none";
   }
   slideIndex++;
-  if (slideIndex > slides.length) { slideIndex = 1; }
+  if (slideIndex > slides.length) slideIndex = 1;
   slides[slideIndex - 1].style.display = "block";
   setTimeout(showSlides, 3000);
 }
